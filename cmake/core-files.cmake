@@ -70,11 +70,13 @@ set(MBGL_CORE_FILES
     src/mbgl/gl/framebuffer.hpp
     src/mbgl/gl/gl.cpp
     src/mbgl/gl/index_buffer.hpp
+    src/mbgl/gl/normalization.hpp
     src/mbgl/gl/object.cpp
     src/mbgl/gl/object.hpp
     src/mbgl/gl/primitives.hpp
     src/mbgl/gl/program.hpp
     src/mbgl/gl/renderbuffer.hpp
+    src/mbgl/gl/segment.cpp
     src/mbgl/gl/segment.hpp
     src/mbgl/gl/state.hpp
     src/mbgl/gl/stencil_mode.cpp
@@ -337,6 +339,8 @@ set(MBGL_CORE_FILES
     src/mbgl/style/sources/vector_source_impl.hpp
 
     # text
+    src/mbgl/text/bidi.cpp
+    src/mbgl/text/bidi.hpp
     src/mbgl/text/check_max_angle.cpp
     src/mbgl/text/check_max_angle.hpp
     src/mbgl/text/collision_feature.cpp
@@ -360,8 +364,6 @@ set(MBGL_CORE_FILES
     src/mbgl/text/quads.hpp
     src/mbgl/text/shaping.cpp
     src/mbgl/text/shaping.hpp
-    src/mbgl/text/bidi.cpp
-    src/mbgl/text/bidi.hpp
 
     # tile
     src/mbgl/tile/geojson_tile.cpp
@@ -442,9 +444,9 @@ set(MBGL_CORE_FILES
     src/mbgl/util/http_header.hpp
     src/mbgl/util/http_timeout.cpp
     src/mbgl/util/http_timeout.hpp
-    src/mbgl/util/ignore.hpp
     src/mbgl/util/i18n.cpp
     src/mbgl/util/i18n.hpp
+    src/mbgl/util/ignore.hpp
     src/mbgl/util/indexed_tuple.hpp
     src/mbgl/util/interpolate.hpp
     src/mbgl/util/intersection_tests.cpp
