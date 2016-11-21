@@ -323,11 +323,6 @@ typedef NS_ENUM(NSUInteger, MGLTextTranslateAnchor) {
 @property (nonatomic, null_resettable) MGLStyleValue<NSValue *> *iconTextFitPadding;
 
 /**
- A string with {tokens} replaced, referencing the data property to pull from.
- */
-@property (nonatomic, null_resettable) MGLStyleValue<NSString *> *iconImage;
-
-/**
  Rotates the icon clockwise.
 
  This property is measured in degrees.
@@ -551,6 +546,11 @@ typedef NS_ENUM(NSUInteger, MGLTextTranslateAnchor) {
  This property is only applied to the style if `textField` is non-`nil`, and `iconImage` is non-`nil`. Otherwise, it is ignored.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *textOptional;
+
+/**
+ A string with {tokens} replaced, referencing the data property to pull from.
+ */
+@property (nonatomic, null_resettable) MGLStyleValue<NSString *> *iconImageName;
 
 #pragma mark - Accessing the Paint Attributes
 

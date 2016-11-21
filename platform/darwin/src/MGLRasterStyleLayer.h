@@ -33,20 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterHueRotate;
 
 /**
- Increase or reduce the brightness of the image. The value is the minimum brightness.
- 
- The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
- */
-@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMin;
-
-/**
- Increase or reduce the brightness of the image. The value is the maximum brightness.
- 
- The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
- */
-@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMax;
-
-/**
  Increase or reduce the saturation of the image.
  
  The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
@@ -68,6 +54,20 @@ NS_ASSUME_NONNULL_BEGIN
  The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `300`. Set this property to `nil` to reset it to the default value.
  */
 @property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterFadeDuration;
+
+/**
+ Increase or reduce the brightness of the image. The value is the minimum brightness.
+ 
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
+ */
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMinimum;
+
+/**
+ Increase or reduce the brightness of the image. The value is the maximum brightness.
+ 
+ The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
+ */
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMaximum;
 
 @end
 

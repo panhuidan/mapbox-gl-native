@@ -26,7 +26,6 @@
     layer.iconSize = [MGLRuntimeStylingHelper testNumber];
     layer.iconTextFit = [MGLRuntimeStylingHelper testEnum:MGLIconTextFitBoth type:@encode(MGLIconTextFit)];
     layer.iconTextFitPadding = [MGLRuntimeStylingHelper testPadding];
-    layer.iconImage = [MGLRuntimeStylingHelper testString];
     layer.iconRotate = [MGLRuntimeStylingHelper testNumber];
     layer.iconPadding = [MGLRuntimeStylingHelper testNumber];
     layer.iconKeepUpright = [MGLRuntimeStylingHelper testBool];
@@ -50,6 +49,7 @@
     layer.textAllowOverlap = [MGLRuntimeStylingHelper testBool];
     layer.textIgnorePlacement = [MGLRuntimeStylingHelper testBool];
     layer.textOptional = [MGLRuntimeStylingHelper testBool];
+    layer.iconImageName = [MGLRuntimeStylingHelper testString];
     layer.iconOpacity = [MGLRuntimeStylingHelper testNumber];
     layer.iconColor = [MGLRuntimeStylingHelper testColor];
     layer.iconHaloColor = [MGLRuntimeStylingHelper testColor];
@@ -80,7 +80,6 @@
     XCTAssert([gLayer.iconTextFit isKindOfClass:[MGLStyleConstantValue class]]);
     XCTAssertEqualObjects(gLayer.iconTextFit, [MGLRuntimeStylingHelper testEnum:MGLIconTextFitBoth type:@encode(MGLIconTextFit)]);
     XCTAssertEqualObjects(gLayer.iconTextFitPadding, [MGLRuntimeStylingHelper testPadding]);
-    XCTAssertEqualObjects(gLayer.iconImage, [MGLRuntimeStylingHelper testString]);
     XCTAssertEqualObjects(gLayer.iconRotate, [MGLRuntimeStylingHelper testNumber]);
     XCTAssertEqualObjects(gLayer.iconPadding, [MGLRuntimeStylingHelper testNumber]);
     XCTAssertEqualObjects(gLayer.iconKeepUpright, [MGLRuntimeStylingHelper testBool]);
@@ -109,6 +108,7 @@
     XCTAssertEqualObjects(gLayer.textAllowOverlap, [MGLRuntimeStylingHelper testBool]);
     XCTAssertEqualObjects(gLayer.textIgnorePlacement, [MGLRuntimeStylingHelper testBool]);
     XCTAssertEqualObjects(gLayer.textOptional, [MGLRuntimeStylingHelper testBool]);
+    XCTAssertEqualObjects(gLayer.iconImageName, [MGLRuntimeStylingHelper testString]);
     XCTAssertEqualObjects(gLayer.iconOpacity, [MGLRuntimeStylingHelper testNumber]);
     XCTAssertEqualObjects(gLayer.iconColor, [MGLRuntimeStylingHelper testColor]);
     XCTAssertEqualObjects(gLayer.iconHaloColor, [MGLRuntimeStylingHelper testColor]);
@@ -136,7 +136,6 @@
     layer.iconSize = [MGLRuntimeStylingHelper testNumberFunction];
     layer.iconTextFit = [MGLRuntimeStylingHelper testEnumFunction:MGLIconTextFitBoth type:@encode(MGLIconTextFit)];
     layer.iconTextFitPadding = [MGLRuntimeStylingHelper testPaddingFunction];
-    layer.iconImage = [MGLRuntimeStylingHelper testStringFunction];
     layer.iconRotate = [MGLRuntimeStylingHelper testNumberFunction];
     layer.iconPadding = [MGLRuntimeStylingHelper testNumberFunction];
     layer.iconKeepUpright = [MGLRuntimeStylingHelper testBoolFunction];
@@ -160,6 +159,7 @@
     layer.textAllowOverlap = [MGLRuntimeStylingHelper testBoolFunction];
     layer.textIgnorePlacement = [MGLRuntimeStylingHelper testBoolFunction];
     layer.textOptional = [MGLRuntimeStylingHelper testBoolFunction];
+    layer.iconImageName = [MGLRuntimeStylingHelper testStringFunction];
     layer.iconOpacity = [MGLRuntimeStylingHelper testNumberFunction];
     layer.iconColor = [MGLRuntimeStylingHelper testColorFunction];
     layer.iconHaloColor = [MGLRuntimeStylingHelper testColorFunction];
@@ -185,7 +185,6 @@
     XCTAssertEqualObjects(gLayer.iconSize, [MGLRuntimeStylingHelper testNumberFunction]);
     XCTAssertEqualObjects(gLayer.iconTextFit, [MGLRuntimeStylingHelper testEnumFunction:MGLIconTextFitBoth type:@encode(MGLIconTextFit)]);
     XCTAssertEqualObjects(gLayer.iconTextFitPadding, [MGLRuntimeStylingHelper testPaddingFunction]);
-    XCTAssertEqualObjects(gLayer.iconImage, [MGLRuntimeStylingHelper testStringFunction]);
     XCTAssertEqualObjects(gLayer.iconRotate, [MGLRuntimeStylingHelper testNumberFunction]);
     XCTAssertEqualObjects(gLayer.iconPadding, [MGLRuntimeStylingHelper testNumberFunction]);
     XCTAssertEqualObjects(gLayer.iconKeepUpright, [MGLRuntimeStylingHelper testBoolFunction]);
@@ -209,6 +208,7 @@
     XCTAssertEqualObjects(gLayer.textAllowOverlap, [MGLRuntimeStylingHelper testBoolFunction]);
     XCTAssertEqualObjects(gLayer.textIgnorePlacement, [MGLRuntimeStylingHelper testBoolFunction]);
     XCTAssertEqualObjects(gLayer.textOptional, [MGLRuntimeStylingHelper testBoolFunction]);
+    XCTAssertEqualObjects(gLayer.iconImageName, [MGLRuntimeStylingHelper testStringFunction]);
     XCTAssertEqualObjects(gLayer.iconOpacity, [MGLRuntimeStylingHelper testNumberFunction]);
     XCTAssertEqualObjects(gLayer.iconColor, [MGLRuntimeStylingHelper testColorFunction]);
     XCTAssertEqualObjects(gLayer.iconHaloColor, [MGLRuntimeStylingHelper testColorFunction]);

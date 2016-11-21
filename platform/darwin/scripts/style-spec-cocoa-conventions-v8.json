@@ -1,0 +1,9 @@
+{
+  "layout_symbol": {
+    "icon-image": "icon-image-name"
+  },
+  "paint_raster": {
+    "raster-brightness-min": "raster-brightness-minimum",
+    "raster-brightness-max": "raster-brightness-maximum"
+  }
+}
