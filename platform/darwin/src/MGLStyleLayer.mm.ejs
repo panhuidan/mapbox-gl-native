@@ -134,8 +134,8 @@ namespace mbgl {
     _rawLayer->set<%- camelize(property.name) %>(mbglValue);
 <% } else { -%>
     auto mbglValue = MGLStyleValueTransformer<<%- valueTransformerArguments(property).join(', ') %>>().toPropertyValue(<%- objCName(property) %>);
-    _rawLayer->set<%- camelize(property.name) %>(mbglValue);
-<% } -%>
+    _rawLayer->set<%- camelize(originalPropertyName(property)) %>(mbglValue);
+    <% } -%>
 }
 
 - (MGLStyleValue<<%- propertyType(property, true) %>> *)<%- objCName(property) %> {
@@ -159,7 +159,7 @@ namespace mbgl {
     _rawLayer->set<%- camelize(property.name) %>(mbglValue);
 <% } else { -%>
     auto mbglValue = MGLStyleValueTransformer<<%- valueTransformerArguments(property).join(', ') %>>().toPropertyValue(<%- objCName(property) %>);
-    _rawLayer->set<%- camelize(property.name) %>(mbglValue);
+    _rawLayer->set<%- camelize(originalPropertyName(property)) %>(mbglValue);
 <% } -%>
 }
 

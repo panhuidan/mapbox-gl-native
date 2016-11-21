@@ -16,6 +16,7 @@ function renameProperties(obj, overrides, stack='') {
             renameProperties(obj, overrides[key], stack.length ? keyPath + key : key);
         } else {
             _.set(obj, keyPath + overrides[key], _.get(obj, keyPath + key));
+            _.set(obj, keyPath + overrides[key] + "._original", key);
             _.unset(obj, keyPath + key);
         }
     });
@@ -225,6 +226,10 @@ global.describeValue = function (value, property, layerType) {
 global.propertyDefault = function (property, layerType) {
     return 'an `MGLStyleValue` object containing ' + describeValue(property.default, property, layerType);
 };
+
+global.originalPropertyName = function (property) {
+    return property._original ? property._original : property.name;
+}
 
 global.propertyType = function (property) {
     switch (property.type) {
