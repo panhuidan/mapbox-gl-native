@@ -860,7 +860,7 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
 - (void)styleQuery
 {
     CGRect queryRect = CGRectInset(self.mapView.bounds, 100, 200);
-    NSArray *features = [self.mapView visibleFeaturesInRect:queryRect];
+    NSArray *visibleFeatures = [self.mapView visibleFeaturesInRect:queryRect];
     
     NSString *querySourceID = @"query-source-id";
     NSString *queryLayerID = @"query-layer-id";
@@ -878,9 +878,9 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
         [self.mapView.style removeSource:source];
     }
     
-    
     dispatch_async(dispatch_get_main_queue(), ^{
-        MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:querySourceID features:features options:nil];
+        MGLShapeCollectionFeature *features = [MGLShapeCollectionFeature shapeCollectionWithShapes:visibleFeatures];
+        MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:querySourceID feature:features options:nil];
         [self.mapView.style addSource:source];
         
         MGLFillStyleLayer *fillLayer = [[MGLFillStyleLayer alloc] initWithIdentifier:queryLayerID source:source];
@@ -933,7 +933,7 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
     feature.identifier = @"leaf-feature";
     feature.attributes = @{@"color": @"red"};
     
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"leaf-source" features:@[feature] options:nil];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"leaf-source" feature:feature options:nil];
     [self.mapView.style addSource:source];
     
     MGLFillStyleLayer *layer = [[MGLFillStyleLayer alloc] initWithIdentifier:@"leaf-fill-layer" source:source];
@@ -1009,7 +1009,10 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
     MGLPolygonFeature *smallBoxFeature = [MGLPolygonFeature polygonWithCoordinates:smallBox count:sizeof(smallBox)/sizeof(smallBox[0])];
     MGLPolygonFeature *largeBoxFeature = [MGLPolygonFeature polygonWithCoordinates:largeBox count:sizeof(largeBox)/sizeof(largeBox[0])];
 
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"mutable-data-source-features-id" features:@[smallBoxFeature] options:nil];
+    MGLShapeCollectionFeature *collection = [MGLShapeCollectionFeature shapeCollectionWithShapes:@[smallBoxFeature]];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"mutable-data-source-features-id"
+                                                                    feature:collection
+                                                                    options:nil];
     [self.mapView.style addSource:source];
     
     MGLFillStyleLayer *layer = [[MGLFillStyleLayer alloc] initWithIdentifier:@"mutable-data-layer-features-id" source:source];
@@ -1032,7 +1035,7 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
         {36.99508088541243, -109.04007911682129},
     };
     MGLPointCollectionFeature *feature = [MGLPointCollectionFeature pointCollectionWithCoordinates:coordinates count:4];
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"wiggle-source" features:@[feature] options:nil];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithIdentifier:@"wiggle-source" feature:feature options:nil];
     [self.mapView.style addSource:source];
     
     MGLCircleStyleLayer *layer = [[MGLCircleStyleLayer alloc] initWithIdentifier:@"wiggle-layer" source:source];

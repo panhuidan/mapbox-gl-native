@@ -99,6 +99,19 @@ extern const MGLGeoJSONSourceOption MGLGeoJSONSourceOptionSimplificationToleranc
  specification</a>.
  
  @param identifier A string that uniquely identifies the source.
+ @param feature A feature that conform to the `MGLFeature` protocol.
+ @param options An `NSDictionary` of options for this source.
+ @return An initialized GeoJSON source.
+ */
+- (instancetype)initWithIdentifier:(NSString *)identifier feature:(nullable id<MGLFeature>)feature options:(nullable NS_DICTIONARY_OF(MGLGeoJSONSourceOption, id) *)options NS_DESIGNATED_INITIALIZER;
+
+/**
+ Returns a GeoJSON source with an identifier, features dictionary, and dictionary
+ of options for the source according to the
+ <a href="https://www.mapbox.com/mapbox-gl-style-spec/#sources-geojson">style
+ specification</a>.
+ 
+ @param identifier A string that uniquely identifies the source.
  @param features An array of features that conform to the `MGLFeature` protocol.
  @param options An `NSDictionary` of options for this source.
  @return An initialized GeoJSON source.

@@ -49,6 +49,17 @@ const MGLGeoJSONSourceOption MGLGeoJSONSourceOptionSimplificationTolerance = @"M
     return self;
 }
 
+- (instancetype)initWithIdentifier:(NSString *)identifier feature:(id<MGLFeature>)feature options:(NSDictionary<MGLGeoJSONSourceOption,id> *)options
+{
+    if (self = [super initWithIdentifier:identifier]) {
+        _features = @[feature];
+        _options = options;
+        [self commonInit];
+    }
+    
+    return self;
+}
+
 - (instancetype)initWithIdentifier:(NSString *)identifier features:(NSArray<id<MGLFeature>> *)features options:(NS_DICTIONARY_OF(NSString *,id) *)options {
     if (self = [super initWithIdentifier:identifier]) {
         _features = features;
@@ -82,9 +93,12 @@ const MGLGeoJSONSourceOption MGLGeoJSONSourceOptionSimplificationTolerance = @"M
         _features = nil;
     } else if (self.geoJSONData) {
         NSString *string = [[NSString alloc] initWithData:self.geoJSONData encoding:NSUTF8StringEncoding];
-        const auto geojson = mapbox::geojson::parse(string.UTF8String).get<mapbox::geojson::feature_collection>();
+        const auto geojson = mapbox::geojson::parse(string.UTF8String);
         source->setGeoJSON(geojson);
-        _features = MGLFeaturesFromMBGLFeatures(geojson);
+        
+#warning geojson can be a feature, feature_collection or a geometry
+        NSAssert(true, @"Not yet implemented");
+        
     } else {
         mbgl::FeatureCollection featureCollection;
         featureCollection.reserve(self.features.count);

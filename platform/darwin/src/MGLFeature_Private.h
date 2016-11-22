@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 NS_ARRAY_OF(MGLShape <MGLFeature> *) *MGLFeaturesFromMBGLFeatures(const std::vector<mbgl::Feature> &features);
 
+id <MGLFeature> MGLFeatureFromMBGLFeature(const mbgl::Feature &feature);
+
 /**
  Takes an `mbgl::Feature` object, an identifer, and attributes dictionary and
  returns the feature object with converted `mbgl::FeatureIdentifier` and 
