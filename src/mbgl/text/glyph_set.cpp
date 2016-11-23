@@ -168,7 +168,7 @@ void GlyphSet::shapeLines(Shaping& shaping, const std::vector<std::u16string>& l
         if (line.empty())
             continue;
         
-        uint32_t lineStartIndex = shaping.positionedGlyphs.size();
+        uint32_t lineStartIndex = static_cast<uint32_t>(shaping.positionedGlyphs.size());
         for (char16_t chr : line)
         {
             auto it = sdfs.find(chr);
@@ -180,17 +180,17 @@ void GlyphSet::shapeLines(Shaping& shaping, const std::vector<std::u16string>& l
             x += glyph.metrics.advance + spacing;
         }
         
-        if (shaping.positionedGlyphs.size() == lineStartIndex)
+        if (static_cast<uint32_t>(shaping.positionedGlyphs.size()) == lineStartIndex)
             continue;
         
         maxLineLength = util::max(x,maxLineLength);
         
-        justifyLine(shaping.positionedGlyphs, sdfs, lineStartIndex, shaping.positionedGlyphs.size() - 1, justify);
+        justifyLine(shaping.positionedGlyphs, sdfs, lineStartIndex, static_cast<uint32_t>(shaping.positionedGlyphs.size()) - 1, justify);
         
         x = 0; y += lineHeight;  // Move to next line
     }
     
-    align(shaping, justify, horizontalAlign, verticalAlign, maxLineLength, lineHeight, lines.size(), translate);
+    align(shaping, justify, horizontalAlign, verticalAlign, maxLineLength, lineHeight, static_cast<uint32_t>(lines.size()), translate);
     const uint32_t height = lines.size() * lineHeight;
     
     // Calculate the bounding box
