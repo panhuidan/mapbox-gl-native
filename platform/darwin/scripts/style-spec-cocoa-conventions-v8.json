@@ -3,7 +3,7 @@
     "icon-image": "icon-image-name"
   },
   "paint_raster": {
-    "raster-brightness-min": "raster-brightness-minimum",
-    "raster-brightness-max": "raster-brightness-maximum"
+    "raster-brightness-min": "minimum-raster-brightness",
+    "raster-brightness-max": "maximum-raster-brightness"
   }
 }

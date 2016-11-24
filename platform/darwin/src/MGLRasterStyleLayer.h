@@ -60,14 +60,14 @@ NS_ASSUME_NONNULL_BEGIN
  
  The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `0`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMinimum;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *minimumRasterBrightness;
 
 /**
  Increase or reduce the brightness of the image. The value is the maximum brightness.
  
  The default value of this property is an `MGLStyleValue` object containing an `NSNumber` object containing the float `1`. Set this property to `nil` to reset it to the default value.
  */
-@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *rasterBrightnessMaximum;
+@property (nonatomic, null_resettable) MGLStyleValue<NSNumber *> *maximumRasterBrightness;
 
 @end
 
