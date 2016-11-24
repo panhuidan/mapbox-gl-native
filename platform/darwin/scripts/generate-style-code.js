@@ -9,20 +9,14 @@ let spec = _.merge(require('mapbox-gl-style-spec').latest, require('./style-spec
 const prefix = 'MGL';
 const suffix = 'StyleLayer';
 
-function renameProperties(obj, overrides, stack='') {
-    _.forOwn(overrides, function (value, key) {
-        const keyPath = stack + '.';
-        if (_.isObject(value)) {
-            renameProperties(obj, overrides[key], stack.length ? keyPath + key : key);
-        } else {
-            _.set(obj, keyPath + overrides[key], _.get(obj, keyPath + key));
-            _.set(obj, keyPath + overrides[key] + "._original", key);
-            _.unset(obj, keyPath + key);
-        }
-    });
-}
-
-renameProperties(spec, cocoaConventions);
+// Rename properties and keep _original for use with setters and getters
+_.forOwn(cocoaConventions, function (properties, kind) {
+    _.forOwn(properties, function (newName, oldName) {
+        spec[kind][newName] = spec[kind][oldName];
+        spec[kind][newName]["_original"] = oldName;
+        delete spec[kind][oldName];
+    })
+});
 
 global.camelize = function (str) {
     return str.replace(/(?:^|-)(.)/g, function (_, x) {

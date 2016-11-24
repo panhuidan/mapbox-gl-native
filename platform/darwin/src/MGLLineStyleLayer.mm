@@ -119,7 +119,7 @@ namespace mbgl {
 - (void)setLineMiterLimit:(MGLStyleValue<NSNumber *> *)lineMiterLimit {
     auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue(lineMiterLimit);
     _rawLayer->setLineMiterLimit(mbglValue);
-    }
+}
 
 - (MGLStyleValue<NSNumber *> *)lineMiterLimit {
     auto propertyValue = _rawLayer->getLineMiterLimit() ?: _rawLayer->getDefaultLineMiterLimit();
@@ -129,7 +129,7 @@ namespace mbgl {
 - (void)setLineRoundLimit:(MGLStyleValue<NSNumber *> *)lineRoundLimit {
     auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue(lineRoundLimit);
     _rawLayer->setLineRoundLimit(mbglValue);
-    }
+}
 
 - (MGLStyleValue<NSNumber *> *)lineRoundLimit {
     auto propertyValue = _rawLayer->getLineRoundLimit() ?: _rawLayer->getDefaultLineRoundLimit();

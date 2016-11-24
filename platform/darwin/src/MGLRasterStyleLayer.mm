@@ -112,7 +112,7 @@
 }
 
 - (MGLStyleValue<NSNumber *> *)minimumRasterBrightness {
-    auto propertyValue = _rawLayer->getMinimumRasterBrightness() ?: _rawLayer->getDefaultMinimumRasterBrightness();
+    auto propertyValue = _rawLayer->getRasterBrightnessMin() ?: _rawLayer->getDefaultRasterBrightnessMin();
     return MGLStyleValueTransformer<float, NSNumber *>().toStyleValue(propertyValue);
 }
 
@@ -122,7 +122,7 @@
 }
 
 - (MGLStyleValue<NSNumber *> *)maximumRasterBrightness {
-    auto propertyValue = _rawLayer->getMaximumRasterBrightness() ?: _rawLayer->getDefaultMaximumRasterBrightness();
+    auto propertyValue = _rawLayer->getRasterBrightnessMax() ?: _rawLayer->getDefaultRasterBrightnessMax();
     return MGLStyleValueTransformer<float, NSNumber *>().toStyleValue(propertyValue);
 }
 
