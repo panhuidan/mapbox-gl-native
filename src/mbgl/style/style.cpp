@@ -136,6 +136,16 @@ void Style::setJSON(const std::string& json) {
 }
 
 void Style::addSource(std::unique_ptr<Source> source) {
+    //Guard against duplicate source ids
+    auto it = std::find_if(sources.begin(), sources.end(), [&](const auto& existing) {
+        return existing->getID() == source->getID();
+    });
+
+    if (it != sources.end()) {
+        std::string msg = "Source " + source->getID() + " already exists";
+        throw std::runtime_error(msg.c_str());
+    }
+
     source->baseImpl->setObserver(this);
     sources.emplace_back(std::move(source));
 }
@@ -160,6 +170,15 @@ std::vector<const Layer*> Style::getLayers() const {
     std::vector<const Layer*> result;
     result.reserve(layers.size());
     for (const auto& layer : layers) {
+        result.push_back(layer.get());
+    }
+    return result;
+}
+
+std::vector<Layer*> Style::getLayers() {
+    std::vector<Layer*> result;
+    result.reserve(layers.size());
+    for (auto& layer : layers) {
         result.push_back(layer.get());
     }
     return result;
@@ -321,6 +340,24 @@ void Style::recalculate(float z, const TimePoint& timePoint, MapMode mode) {
             source->baseImpl->removeTiles();
         }
     }
+}
+
+std::vector<const Source*> Style::getSources() const {
+    std::vector<const Source*> result;
+    result.reserve(sources.size());
+    for (const auto& source : sources) {
+        result.push_back(source.get());
+    }
+    return result;
+}
+
+std::vector<Source*> Style::getSources() {
+    std::vector<Source*> result;
+    result.reserve(sources.size());
+    for (auto& source : sources) {
+        result.push_back(source.get());
+    }
+    return result;
 }
 
 Source* Style::getSource(const std::string& id) const {

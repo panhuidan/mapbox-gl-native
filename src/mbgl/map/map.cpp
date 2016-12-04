@@ -825,7 +825,8 @@ AnnotationIDs Map::queryPointAnnotations(const ScreenBox& box) {
     std::set<AnnotationID> set;
     for (auto &feature : features) {
         assert(feature.id);
-        assert(*feature.id <= std::numeric_limits<AnnotationID>::max());
+        assert(feature.id->is<uint64_t>());
+        assert(feature.id->get<uint64_t>() <= std::numeric_limits<AnnotationID>::max());
         set.insert(static_cast<AnnotationID>(feature.id->get<uint64_t>()));
     }
     AnnotationIDs ids;
@@ -835,6 +836,10 @@ AnnotationIDs Map::queryPointAnnotations(const ScreenBox& box) {
 }
 
 #pragma mark - Style API
+
+std::vector<style::Source*> Map::getSources() {
+    return impl->style ? impl->style->getSources() : std::vector<style::Source*>();
+}
 
 style::Source* Map::getSource(const std::string& sourceID) {
     if (impl->style) {
@@ -859,7 +864,11 @@ std::unique_ptr<Source> Map::removeSource(const std::string& sourceID) {
     return nullptr;
 }
 
-style::Layer* Map::getLayer(const std::string& layerID) {
+std::vector<style::Layer*> Map::getLayers() {
+    return impl->style ? impl->style->getLayers() : std::vector<style::Layer*>();
+}
+
+Layer* Map::getLayer(const std::string& layerID) {
     if (impl->style) {
         impl->styleMutated = true;
         return impl->style->getLayer(layerID);
