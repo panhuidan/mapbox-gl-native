@@ -694,6 +694,8 @@ void QMapboxGL::addSource(const QString &sourceID, const QVariantMap &params)
     using namespace mbgl::style;
     using namespace mbgl::style::conversion;
 
+    removeSource(sourceID);
+
     Result<std::unique_ptr<Source>> source = convert<std::unique_ptr<Source>>(QVariant(params), sourceID.toStdString());
     if (!source) {
         qWarning() << "Unable to add source:" << source.error().message.c_str();
@@ -705,7 +707,11 @@ void QMapboxGL::addSource(const QString &sourceID, const QVariantMap &params)
 
 void QMapboxGL::removeSource(const QString& sourceID)
 {
-    d_ptr->mapObj->removeSource(sourceID.toStdString());
+    auto sourceIDStdString = sourceID.toStdString();
+
+    if (d_ptr->mapObj->getSource(sourceIDStdString)) {
+        d_ptr->mapObj->removeSource(sourceIDStdString);
+    }
 }
 
 void QMapboxGL::addCustomLayer(const QString &id,
@@ -800,15 +806,6 @@ void QMapboxGL::setFilter(const QString& layer_, const QVariant& filter_)
 #if QT_VERSION >= 0x050000
 void QMapboxGL::render(QOpenGLFramebufferObject *fbo)
 {
-#if defined(__APPLE__)
-    // FIXME Consume one GL_INVALID_OPERATION from Qt.
-    // See https://bugreports.qt.io/browse/QTBUG-36802 for details.
-    GLenum error = glGetError();
-    if (!(error == GL_NO_ERROR || error == GL_INVALID_OPERATION)) {
-        throw std::runtime_error(std::string("glGetError() returned ") + std::to_string(error));
-    }
-#endif
-
     d_ptr->dirty = false;
     d_ptr->fbo = fbo;
     d_ptr->mapObj->render(*d_ptr);
@@ -856,6 +853,7 @@ QMapboxGLPrivate::QMapboxGLPrivate(QMapboxGL *q, const QMapboxGLSettings &settin
     fileSourceObj->setAccessToken(settings.accessToken().toStdString());
     connect(this, SIGNAL(needsRendering()), q_ptr, SIGNAL(needsRendering()), Qt::QueuedConnection);
     connect(this, SIGNAL(mapChanged(QMapbox::MapChange)), q_ptr, SIGNAL(mapChanged(QMapbox::MapChange)), Qt::QueuedConnection);
+    connect(this, SIGNAL(copyrightsChanged(QString)), q_ptr, SIGNAL(copyrightsChanged(QString)), Qt::QueuedConnection);
 }
 
 QMapboxGLPrivate::~QMapboxGLPrivate()
@@ -891,6 +889,16 @@ void QMapboxGLPrivate::invalidate()
 
 void QMapboxGLPrivate::notifyMapChange(mbgl::MapChange change)
 {
+    if (change == mbgl::MapChangeSourceDidChange) {
+        std::string attribution;
+        for (const auto& source : mapObj->getSources()) {
+            // Avoid duplicates by using the most complete attribution HTML snippet.
+            if (source->getAttribution() && (attribution.size() < source->getAttribution()->size()))
+                attribution = *source->getAttribution();
+        }
+        emit copyrightsChanged(QString::fromStdString(attribution));
+    }
+
     emit mapChanged(static_cast<QMapbox::MapChange>(change));
 }
 

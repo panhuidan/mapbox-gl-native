@@ -1,31 +1,43 @@
 package com.mapbox.mapboxsdk.maps;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.graphics.PointF;
+import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.v4.content.ContextCompat;
 
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
+import com.mapbox.mapboxsdk.location.LocationListener;
+import com.mapbox.mapboxsdk.location.LocationServices;
 import com.mapbox.mapboxsdk.maps.widgets.MyLocationView;
+
+import timber.log.Timber;
 
 /**
  * Settings for the user location and bearing tracking of a MapboxMap.
  */
-public class TrackingSettings {
+public final class TrackingSettings {
 
-    private MapView mapView;
-    private UiSettings uiSettings;
+    private final MyLocationView myLocationView;
+    private final UiSettings uiSettings;
+    private final FocalPointChangeListener focalPointChangedListener;
+    private LocationListener myLocationListener;
+
+    private boolean myLocationEnabled;
     private boolean dismissLocationTrackingOnGesture = true;
     private boolean dismissBearingTrackingOnGesture = true;
 
-    @MyLocationTracking.Mode
-    private int myLocationTrackingMode;
+    private MapboxMap.OnMyLocationTrackingModeChangeListener onMyLocationTrackingModeChangeListener;
+    private MapboxMap.OnMyBearingTrackingModeChangeListener onMyBearingTrackingModeChangeListener;
 
-    @MyBearingTracking.Mode
-    private int myBearingTrackingMode;
-
-    TrackingSettings(@NonNull MapView mapView, UiSettings uiSettings) {
-        this.mapView = mapView;
+    TrackingSettings(@NonNull MyLocationView myLocationView, UiSettings uiSettings, FocalPointChangeListener focalPointChangedListener) {
+        this.myLocationView = myLocationView;
+        this.focalPointChangedListener = focalPointChangedListener;
         this.uiSettings = uiSettings;
     }
 
@@ -44,8 +56,17 @@ public class TrackingSettings {
      */
     @UiThread
     public void setMyLocationTrackingMode(@MyLocationTracking.Mode int myLocationTrackingMode) {
-        this.myLocationTrackingMode = myLocationTrackingMode;
-        mapView.setMyLocationTrackingMode(myLocationTrackingMode);
+        myLocationView.setMyLocationTrackingMode(myLocationTrackingMode);
+
+        if (myLocationTrackingMode == MyLocationTracking.TRACKING_FOLLOW) {
+            focalPointChangedListener.onFocalPointChanged(new PointF(myLocationView.getCenterX(), myLocationView.getCenterY()));
+        } else {
+            focalPointChangedListener.onFocalPointChanged(null);
+        }
+
+        if (onMyLocationTrackingModeChangeListener != null) {
+            onMyLocationTrackingModeChangeListener.onMyLocationTrackingModeChange(myLocationTrackingMode);
+        }
     }
 
     /**
@@ -58,7 +79,7 @@ public class TrackingSettings {
     @UiThread
     @MyLocationTracking.Mode
     public int getMyLocationTrackingMode() {
-        return myLocationTrackingMode;
+        return myLocationView.getMyLocationTrackingMode();
     }
 
     /**
@@ -78,8 +99,10 @@ public class TrackingSettings {
      */
     @UiThread
     public void setMyBearingTrackingMode(@MyBearingTracking.Mode int myBearingTrackingMode) {
-        this.myBearingTrackingMode = myBearingTrackingMode;
-        mapView.setMyBearingTrackingMode(myBearingTrackingMode);
+        myLocationView.setMyBearingTrackingMode(myBearingTrackingMode);
+        if (onMyBearingTrackingModeChangeListener != null) {
+            onMyBearingTrackingModeChangeListener.onMyBearingTrackingModeChange(myBearingTrackingMode);
+        }
     }
 
     /**
@@ -92,7 +115,7 @@ public class TrackingSettings {
     @UiThread
     @MyBearingTracking.Mode
     public int getMyBearingTrackingMode() {
-        return myBearingTrackingMode;
+        return myLocationView.getMyBearingTrackingMode();
     }
 
     /**
@@ -178,7 +201,7 @@ public class TrackingSettings {
      * @return True if location tracking is disabled.
      */
     public boolean isLocationTrackingDisabled() {
-        return myLocationTrackingMode == MyLocationTracking.TRACKING_NONE;
+        return myLocationView.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE;
     }
 
     /**
@@ -187,7 +210,7 @@ public class TrackingSettings {
      * @return True if bearing tracking is disabled.
      */
     public boolean isBearingTrackingDisabled() {
-        return myBearingTrackingMode == MyBearingTracking.NONE;
+        return myLocationView.getMyBearingTrackingMode() == MyBearingTracking.NONE;
     }
 
     /**
@@ -200,7 +223,9 @@ public class TrackingSettings {
         //    The user settings are enabled AND;
         //    EITHER bearing tracking is dismissed on gesture OR there is no bearing tracking
         return uiSettings.isRotateGesturesEnabled() &&
-                (dismissBearingTrackingOnGesture || myBearingTrackingMode == MyBearingTracking.NONE || (myLocationTrackingMode == MyLocationTracking.TRACKING_NONE));
+                (dismissBearingTrackingOnGesture
+                        || myLocationView.getMyBearingTrackingMode() == MyBearingTracking.NONE
+                        || myLocationView.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE);
     }
 
     /**
@@ -210,7 +235,8 @@ public class TrackingSettings {
      */
     public boolean isScrollGestureCurrentlyEnabled() {
         return uiSettings.isScrollGesturesEnabled() &&
-                (dismissLocationTrackingOnGesture || myLocationTrackingMode == MyLocationTracking.TRACKING_NONE);
+                (dismissLocationTrackingOnGesture
+                        || myLocationView.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE);
     }
 
     /**
@@ -220,7 +246,7 @@ public class TrackingSettings {
      * @param translate
      * @param rotate
      */
-    public void resetTrackingModesIfRequired(boolean translate, boolean rotate) {
+    void resetTrackingModesIfRequired(boolean translate, boolean rotate) {
         // if tracking is on, and we should dismiss tracking with gestures, and this is a scroll action, turn tracking off
         if (translate && !isLocationTrackingDisabled() && isDismissLocationTrackingOnGesture()) {
             setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
@@ -232,7 +258,60 @@ public class TrackingSettings {
         }
     }
 
-    public void resetTrackingModesIfRequired(CameraPosition cameraPosition) {
+    void resetTrackingModesIfRequired(CameraPosition cameraPosition) {
         resetTrackingModesIfRequired(cameraPosition.target != null, cameraPosition.bearing != -1);
+    }
+
+    Location getMyLocation() {
+        return myLocationView.getLocation();
+    }
+
+    void setOnMyLocationChangeListener(@Nullable final MapboxMap.OnMyLocationChangeListener listener) {
+        if (listener != null) {
+            myLocationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if (listener != null) {
+                        listener.onMyLocationChange(location);
+                    }
+                }
+            };
+            LocationServices.getLocationServices(myLocationView.getContext()).addLocationListener(myLocationListener);
+        } else {
+            LocationServices.getLocationServices(myLocationView.getContext()).removeLocationListener(myLocationListener);
+            myLocationListener = null;
+        }
+    }
+
+    boolean isPermissionsAccepted() {
+        return (ContextCompat.checkSelfPermission(myLocationView.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ||
+                ContextCompat.checkSelfPermission(myLocationView.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    void setOnMyLocationTrackingModeChangeListener(MapboxMap.OnMyLocationTrackingModeChangeListener onMyLocationTrackingModeChangeListener) {
+        this.onMyLocationTrackingModeChangeListener = onMyLocationTrackingModeChangeListener;
+    }
+
+    void setOnMyBearingTrackingModeChangeListener(MapboxMap.OnMyBearingTrackingModeChangeListener onMyBearingTrackingModeChangeListener) {
+        this.onMyBearingTrackingModeChangeListener = onMyBearingTrackingModeChangeListener;
+    }
+
+    MyLocationView getMyLocationView() {
+        return myLocationView;
+    }
+
+
+    boolean isMyLocationEnabled() {
+        return myLocationEnabled;
+    }
+
+    void setMyLocationEnabled(boolean locationEnabled) {
+        if (!isPermissionsAccepted()) {
+            Timber.e("Could not activate user location tracking: "
+                    + "user did not accept the permission or permissions were not requested.");
+            return;
+        }
+        myLocationEnabled = locationEnabled;
+        myLocationView.setEnabled(locationEnabled);
     }
 }

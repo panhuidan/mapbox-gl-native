@@ -379,6 +379,7 @@ public class MyLocationView extends View {
         }
     }
 
+    // TODO refactor MapboxMap out
     public void setMapboxMap(MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
         this.projection = mapboxMap.getProjection();
@@ -485,6 +486,17 @@ public class MyLocationView extends View {
 
         this.myLocationTrackingMode = myLocationTrackingMode;
         invalidate();
+    }
+
+    @MyLocationTracking.Mode
+    public int getMyLocationTrackingMode() {
+        return myLocationTrackingMode;
+    }
+
+
+    @MyBearingTracking.Mode
+    public int getMyBearingTrackingMode() {
+        return myBearingTrackingMode;
     }
 
     private void setCompass(double bearing) {

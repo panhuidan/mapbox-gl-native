@@ -1,18 +1,25 @@
 package com.mapbox.mapboxsdk.maps.widgets;
 
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
-import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.constants.MyLocationTracking;
+import com.mapbox.mapboxsdk.maps.FocalPointChangeListener;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
+import com.mapbox.mapboxsdk.maps.Projection;
 
 /**
  * Settings to configure the visual appearance of the MyLocationView.
  */
 public class MyLocationViewSettings {
 
-    private MapView mapView;
+    private Projection projection;
     private MyLocationView myLocationView;
+    private FocalPointChangeListener focalPointChangeListener;
 
     //
     // State
@@ -57,14 +64,30 @@ public class MyLocationViewSettings {
 
     /**
      * Creates an instance of MyLocationViewSettings
+     * <p>
      *
-     * @param mapView        the MapView that hosts the MyLocationView
-     * @param myLocationView the MyLocationView to apply the settings to
+     * @param myLocationView            the MyLocationView to apply the settings to
+     * @param projection                the MapView projection
+     * @param focalPointChangedListener the interface to be invoked when focal points changes
      * @see MyLocationView
      */
-    public MyLocationViewSettings(MapView mapView, MyLocationView myLocationView) {
-        this.mapView = mapView;
+    public MyLocationViewSettings(MyLocationView myLocationView, Projection projection, FocalPointChangeListener focalPointChangedListener) {
         this.myLocationView = myLocationView;
+        this.projection = projection;
+        this.focalPointChangeListener = focalPointChangedListener;
+    }
+
+    public void initialise(@NonNull MapboxMapOptions options) {
+        CameraPosition position = options.getCamera();
+        if (position != null && !position.equals(CameraPosition.DEFAULT)) {
+            setTilt(position.tilt);
+        }
+        setForegroundDrawable(options.getMyLocationForegroundDrawable(), options.getMyLocationForegroundBearingDrawable());
+        setForegroundTintColor(options.getMyLocationForegroundTintColor());
+        setBackgroundDrawable(options.getMyLocationBackgroundDrawable(), options.getMyLocationBackgroundPadding());
+        setBackgroundTintColor(options.getMyLocationBackgroundTintColor());
+        setAccuracyAlpha(options.getMyLocationAccuracyAlpha());
+        setAccuracyTintColor(options.getMyLocationAccuracyTintColor());
     }
 
     /**
@@ -208,7 +231,8 @@ public class MyLocationViewSettings {
     public void setPadding(int left, int top, int right, int bottom) {
         padding = new int[]{left, top, right, bottom};
         myLocationView.setContentPadding(padding);
-        mapView.invalidateContentPadding();
+        projection.invalidateContentPadding(padding);
+        invalidateFocalPointForTracking(myLocationView);
     }
 
     /**
@@ -256,5 +280,17 @@ public class MyLocationViewSettings {
     public void setAccuracyTintColor(@ColorInt int accuracyTintColor) {
         this.accuracyTintColor = accuracyTintColor;
         myLocationView.setAccuracyTint(accuracyTintColor);
+    }
+
+    public void setTilt(double tilt) {
+        myLocationView.setTilt(tilt);
+    }
+
+    private void invalidateFocalPointForTracking(MyLocationView myLocationView) {
+        if (!(myLocationView.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE)) {
+            focalPointChangeListener.onFocalPointChanged(new PointF(myLocationView.getCenterX(), myLocationView.getCenterY()));
+        } else {
+            focalPointChangeListener.onFocalPointChanged(null);
+        }
     }
 }
